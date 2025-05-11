@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Simulations Hub</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/components/header.css">
+  <link rel="stylesheet" href="css/components/card.css">
+  <link rel="stylesheet" href="css/components/controls.css">
+</head>
+<body>
+  <header>
+    <h1>Agent Simulations Hub</h1>
+    <nav id="main-nav">
+      <a href="/" class="nav-link">Home</a>
+      <a href="langton-ant.html" class="nav-link">Langton's Ant</a>
+      <a href="/game-of-life" class="nav-link">Game of Life</a>
+      <!-- Additional navigation links -->
+    </nav>
+  </header>
+
+  <main id="app">
+    <!-- Hub View -->
+    <div id="hub-view" class="view">
+      <div class="simulation-cards">
+        <div class="simulation-card" data-sim="langton-ant">
+          <h2>Langton's Ant</h2>
+          <div class="thumbnail">
+            <img src="assets/thumbnails/langton-ant.png" alt="Langton's Ant Preview">
+          </div>
+          <p>Simple cellular automaton with emergent complex behavior from basic rules.</p>
+        </div>
+        
+        <div class="simulation-card" data-sim="game-of-life">
+          <h2>Game of Life</h2>
+          <div class="thumbnail">
+            <img src="assets/thumbnails/game-of-life.png" alt="Game of Life Preview">
+          </div>
+          <p>Conway's classic cellular automaton demonstrating emergence and self-organization.</p>
+        </div>
+        
+        <!-- Additional simulation cards -->
+      </div>
+    </div>
+    
+    <!-- Simulation View -->
+    <div id="simulation-container" class="view hidden">
+      <!-- Dynamically loaded simulation content -->
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Agent Simulations Hub</p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html> 
