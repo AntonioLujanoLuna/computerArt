@@ -1,6 +1,6 @@
 // js/simulations/langtonAnt/config.js
 export const CANVAS_ID = 'langtonCanvas';
-export const GRID_SIZE = 250;
+export const GRID_SIZE = 500;
 export const CELL_SIZE = 5;
 
 // INITIAL_ANT_STATE and ANT_COLOR are removed as they will be part of the multi-ant JSON config.
