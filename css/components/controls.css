@@ -1,66 +1,89 @@
 /* components/controls.css */ 
+.sidebar-toggle-button {
+    position: fixed; /* Or absolute, depending on header */
+    top: 15px; /* Adjust as needed */
+    right: 20px; /* Adjust as needed */
+    padding: 8px 12px;
+    background-color: #e74c3c; /* Example color, match to theme */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1001; /* Ensure it's above the sidebar if it ever overlaps */
+    font-size: 0.9em;
+}
+
+.sidebar-toggle-button:hover {
+    background-color: #c0392b;
+}
+
 .controls {
-    position: fixed; /* Or absolute if positioning relative to #simulation-view */
-    bottom: 20px;
-    right: 20px;
-    background-color: rgba(44, 62, 80, 0.8); /* Semi-transparent dark blue-grey */
-    /* padding: 15px; -- Padding will be managed by content and drag handle */
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    z-index: 100; /* Ensure it's above other elements */
-
-    /* Flex properties for internal layout of buttons/slider */
+    position: fixed; 
+    top: 0; /* Assuming header is not fixed or has its own space */
+    right: 0;
+    width: 300px; /* Adjust width as desired */
+    height: 100vh; /* Full viewport height */
+    background-color: rgba(44, 62, 80, 0.95); /* Slightly more opaque if desired */
+    z-index: 1000;
     display: flex;
-    flex-direction: column; /* Stack controls vertically in the panel */
-    /* align-items: flex-start; -- Let content determine alignment, or set width for children */
+    flex-direction: column;
     gap: 10px; 
-    resize: both; 
-    overflow: auto; 
-    min-width: 220px; 
-    min-height: 200px; /* Adjusted min-height */
+    padding: 15px;
+    box-sizing: border-box;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+    overflow-y: auto; /* For scrollable content */
+    box-shadow: -2px 0 5px rgba(0,0,0,0.2); /* Shadow on the left side */
+    /* Remove old properties like bottom, min-width, min-height, resize, border-radius for panel body */
 }
 
-.controls .drag-handle {
-    width: calc(100% + 30px); /* Span full width, adjust for negative margin */
-    margin: -15px -15px 0 -15px; /* Pull to edges, assuming 15px padding on parent */
-    padding: 8px 15px;
-    background-color: rgba(0,0,0,0.2);
+.controls.hidden {
+    transform: translateX(100%); /* Slide off-screen */
+}
+
+.controls h2 {
+    font-size: 1.2em;
+    color: #ecf0f1;
     text-align: center;
-    font-size: 0.8em;
-    color: rgba(255,255,255,0.7);
-    cursor: grab;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    margin-bottom: 10px; /* Space after handle */
+    margin-top: 0;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Adjust padding for content area below drag handle */
-.controls > *:not(.drag-handle) {
-    padding-left: 15px;
-    padding-right: 15px;
+/* Remove .drag-handle and .minimize-button styles */
+
+/* Adjust padding for content area - ensure direct children of .controls fill width correctly */
+.controls > *:not(h2) { /* Target tab-container and other direct elements */
+    /* padding-left: 0; Remove specific padding if main .controls padding is enough */
+    /* padding-right: 0; */
 }
-.controls > button,
+
+.controls > button, /* These were for buttons directly in .controls, might need review */
 .controls > .speed-control-group,
 .controls > label.rules-label,
-.controls > textarea {
-    width: calc(100% - 30px); /* Account for padding */
+.controls > textarea,
+.controls > fieldset { /* Added fieldset here */
+    width: 100%; /* Make them fill the new sidebar width */
     box-sizing: border-box;
 }
-.controls > div:last-child { /* For random rules group */
-    padding-bottom:15px;
+
+.controls > div:last-child { /* For random rules group, might not be needed if fieldset used */
+    /* padding-bottom:15px; Handled by gap or main padding */
 }
 
-.controls button {
+.controls button { /* General button styling within controls */
     background-color: #e74c3c; 
     color: white;
     border: none;
-    padding: 8px 12px; /* Slightly adjusted padding */
+    padding: 8px 12px; 
     border-radius: 5px;
     cursor: pointer;
     font-size: 0.9em;
     transition: background-color 0.2s ease;
-    width: 100%; /* Make buttons fill panel width */
+    width: 100%; 
     text-align: left;
+    box-sizing: border-box;
 }
 
 .controls button:hover {
@@ -69,11 +92,10 @@
 
 .controls label {
     font-size: 0.9em;
-    color: #ecf0f1; /* Light text for label */
-    /* margin-left: 0; /* Reset margin-left if stacking vertically */
+    color: #ecf0f1; 
 }
 
-.controls .speed-control-group { /* Group label and slider */
+.controls .speed-control-group { 
     display: flex;
     align-items: center;
     width: 100%;
@@ -83,20 +105,18 @@
 .controls input[type="range"] {
     cursor: pointer;
     vertical-align: middle; 
-    flex-grow: 1; /* Allow slider to take available space in its group */
+    flex-grow: 1; 
 }
-
-/* No direct input[type="checkbox"] styling as it was removed */ 
 
 .controls label.rules-label {
     font-size: 0.9em;
     color: #ecf0f1;
-    margin-bottom: 5px; /* Space before textarea */
+    margin-bottom: 5px; 
     font-weight: bold;
 }
 
 .controls textarea {
-    width: 100%; /* Fill panel width */
+    width: 100%; 
     background-color: rgba(0,0,0,0.2);
     color: #ecf0f1;
     border: 1px solid rgba(255,255,255,0.2);
@@ -104,8 +124,50 @@
     padding: 8px;
     font-family: var(--font-mono, monospace);
     font-size: 0.85em;
-    resize: vertical; /* Allow vertical resize */
+    resize: vertical; 
     min-height: 60px;
+    box-sizing: border-box;
+}
+
+/* Styling for the color palette preview in the Visual tab */
+#colorPalettePreview {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 4px;
+    min-height: 30px; 
+}
+
+#colorPalettePreview .color-swatch {
+    width: 20px;
+    height: 20px;
+    margin: 3px;
+    border: 1px solid #555; 
+    border-radius: 3px;
+    display: inline-block;
+}
+
+#colorPalettePreview .no-colors-text {
+    font-style: italic;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.8em;
+}
+
+/* Styles for when the control panel is minimized */
+.controls.controls-minimized > *:not(.drag-handle) {
+    display: none; /* Hide all direct children except the drag handle */
+}
+
+.controls.controls-minimized {
+    min-height: 0; /* Allow it to shrink to the drag handle's height */
+    height: auto; /* Adjust height to content (drag handle only) */
+    resize: none; /* Disable resize when minimized */
+    overflow: hidden; /* Hide overflow when minimized, though content is hidden anyway */
 }
 
 /* Ensure buttons after textarea also have some top margin if needed, though `gap` in .controls should handle it */ 

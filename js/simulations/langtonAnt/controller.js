@@ -1,5 +1,5 @@
 // js/simulations/langtonAnt/controller.js
-import { UI_ELEMENT_IDS, GRID_SIZE, setCurrentPalette, populateCellStateColors, generateRandomHexColor } from './config.js';
+import { UI_ELEMENT_IDS, GRID_SIZE, setCurrentPalette, populateCellStateColors, generateRandomHexColor, getCellStateColors } from './config.js';
 import { initializeModel, getAnts } from './model.js';
 import { initializeView, drawSimulation, getCanvas, setZoom, adjustPan, resetPanZoom } from './view.js';
 import { applyLangtonRules, validateRules, getDefaultRules, generateRandomRuleset } from './rules.js';
@@ -14,8 +14,8 @@ let lastMouseX, lastMouseY;
 let currentZoomLevel = 1.0;
 
 // Control panel dragging state
-let isDraggingPanel = false;
-let panelOffsetX, panelOffsetY;
+// let isDraggingPanel = false;
+// let panelOffsetX, panelOffsetY;
 
 // Default single-ant configuration structure for textarea example and reset
 // Mirrors the structure of defaultAntConfiguration in model.js
@@ -176,15 +176,6 @@ function handleApplyRules() {
     }
 }
 
-// This function now resets the model to its default and updates the textarea
-function handleResetRules() {
-    stopSimulation();
-    initializeModel(); // Initializes with defaultAntConfiguration from model.js
-    updateTextareaWithConfiguration(defaultAntConfigsForTextArea); // Show default in textarea
-    console.log('Model reset to default ant configuration.');
-    drawSimulation(); 
-}
-
 function handleGenerateRandomRules() {
     const numStatesInput = document.getElementById(UI_ELEMENT_IDS.numStatesForRandom);
     const rulesTextarea = document.getElementById(UI_ELEMENT_IDS.rulesTextarea);
@@ -289,37 +280,37 @@ function updateTextareaWithConfiguration(configObject) {
 }
 
 // Drag and Drop for Control Panel
-function panelDragStart(event, panel) {
-    if (event.target.classList.contains('drag-handle')) {
-        isDraggingPanel = true;
-        panelOffsetX = event.clientX - panel.offsetLeft;
-        panelOffsetY = event.clientY - panel.offsetTop;
-        document.addEventListener('mousemove', panelDragMove);
-        document.addEventListener('mouseup', panelDragEnd);
-        event.preventDefault();
-    }
-}
+// function panelDragStart(event, panel) {
+//     if (event.target.classList.contains('drag-handle')) {
+//         isDraggingPanel = true;
+//         panelOffsetX = event.clientX - panel.offsetLeft;
+//         panelOffsetY = event.clientY - panel.offsetTop;
+//         document.addEventListener('mousemove', panelDragMove);
+//         document.addEventListener('mouseup', panelDragEnd);
+//         event.preventDefault();
+//     }
+// }
 
-function panelDragMove(event) {
-    if (isDraggingPanel) {
-        const panel = document.querySelector('.controls');
-        if (!panel) return;
-        let newX = event.clientX - panelOffsetX;
-        let newY = event.clientY - panelOffsetY;
-        const maxX = window.innerWidth - panel.offsetWidth;
-        const maxY = window.innerHeight - panel.offsetHeight;
-        newX = Math.max(0, Math.min(newX, maxX));
-        newY = Math.max(0, Math.min(newY, maxY));
-        panel.style.left = newX + 'px';
-        panel.style.top = newY + 'px';
-    }
-}
+// function panelDragMove(event) {
+//     if (isDraggingPanel) {
+//         const panel = document.querySelector('.controls');
+//         if (!panel) return;
+//         let newX = event.clientX - panelOffsetX;
+//         let newY = event.clientY - panelOffsetY;
+//         const maxX = window.innerWidth - panel.offsetWidth;
+//         const maxY = window.innerHeight - panel.offsetHeight;
+//         newX = Math.max(0, Math.min(newX, maxX));
+//         newY = Math.max(0, Math.min(newY, maxY));
+//         panel.style.left = newX + 'px';
+//         panel.style.top = newY + 'px';
+//     }
+// }
 
-function panelDragEnd() {
-    isDraggingPanel = false;
-    document.removeEventListener('mousemove', panelDragMove);
-    document.removeEventListener('mouseup', panelDragEnd);
-}
+// function panelDragEnd() {
+//     isDraggingPanel = false;
+//     document.removeEventListener('mousemove', panelDragMove);
+//     document.removeEventListener('mouseup', panelDragEnd);
+// }
 
 export function initializeControls() {
     const startButton = document.getElementById(UI_ELEMENT_IDS.startButton);
@@ -327,19 +318,18 @@ export function initializeControls() {
     const resetButton = document.getElementById(UI_ELEMENT_IDS.resetButton);
     const speedSlider = document.getElementById(UI_ELEMENT_IDS.speedSlider);
     const applyRulesButton = document.getElementById(UI_ELEMENT_IDS.applyRulesButton);
-    const resetRulesButton = document.getElementById(UI_ELEMENT_IDS.resetRulesButton);
     const generateRulesButton = document.getElementById(UI_ELEMENT_IDS.generateRulesButton);
-    // New UI elements for multi-ant generation
     const numAntsForGenerationInput = document.getElementById(UI_ELEMENT_IDS.numAntsForGeneration);
     const generateAntsButton = document.getElementById(UI_ELEMENT_IDS.generateAntsButton);
     const paletteSelect = document.getElementById(UI_ELEMENT_IDS.paletteSelect);
+    // const minimizeControlsButton = document.getElementById(UI_ELEMENT_IDS.minimizeControlsButton); // REMOVED
+    const toggleControlsSidebarButton = document.getElementById(UI_ELEMENT_IDS.toggleControlsSidebarButton); // NEW sidebar toggle
 
     const canvas = getCanvas();
     const controlsPanel = document.querySelector('.controls');
 
     if (startButton) startButton.addEventListener('click', startSimulation);
     if (stopButton) stopButton.addEventListener('click', stopSimulation);
-    // Reset button now calls the main resetSimulation which handles model and textarea
     if (resetButton) resetButton.addEventListener('click', resetSimulation); 
     if (speedSlider) {
         speedSlider.addEventListener('input', (event) => setSimulationSpeed(event.target.value));
@@ -347,16 +337,12 @@ export function initializeControls() {
     }
 
     if (applyRulesButton) applyRulesButton.addEventListener('click', handleApplyRules);
-    // Reset Rules button now calls the new handleResetRules
-    if (resetRulesButton) resetRulesButton.addEventListener('click', handleResetRules);
     if (generateRulesButton) generateRulesButton.addEventListener('click', handleGenerateRandomRules);
-    // Attach new handler for generating multi-ant setup
     if (generateAntsButton) generateAntsButton.addEventListener('click', handleGenerateAntsSetup);
 
     if (paletteSelect) {
         paletteSelect.addEventListener('change', (event) => {
             setCurrentPalette(event.target.value);
-            // Recalculate maxState based on current rules in textarea to repopulate colors correctly
             const rulesTextarea = document.getElementById(UI_ELEMENT_IDS.rulesTextarea);
             let maxStateInRules = 0;
             if (rulesTextarea && rulesTextarea.value) {
@@ -379,25 +365,22 @@ export function initializeControls() {
                 }
                 catch (e) {
                     console.warn('Could not parse rules from textarea to determine max state for palette change. Using default.');
-                    // If parsing fails, use a default (e.g., from defaultAntConfigsForTextArea or a fixed number)
-                    // For now, let's use a default of 5 states (0-4) if parsing fails.
-                    const defaultRulesForPalette = getDefaultRules(); // Standard Langton's ant rules (2 states)
+                    const defaultRulesForPalette = getDefaultRules(); 
                     defaultRulesForPalette.forEach(rule => {
                          maxStateInRules = Math.max(maxStateInRules, rule.currentState, rule.nextCellState);
                     });
                 }
             }
             populateCellStateColors(maxStateInRules + 1);
-            drawSimulation(); // Redraw with new colors
+            updateColorPalettePreview(); 
+            drawSimulation(); 
         });
-        // Initial population of colors based on default palette and default rules
-        // This might be slightly redundant if config.js already calls populate on load,
-        // but ensures controller syncs it with its view of default rules.
         let initialMaxState = 0;
         defaultAntConfigsForTextArea[0].rules.forEach(rule => {
             initialMaxState = Math.max(initialMaxState, rule.currentState, rule.nextCellState);
         });
         populateCellStateColors(initialMaxState + 1);
+        updateColorPalettePreview(); 
     }
 
     if (canvas) {
@@ -408,12 +391,67 @@ export function initializeControls() {
         canvas.addEventListener('wheel', handleMouseWheel);
     }
 
-    if (controlsPanel) {
-        controlsPanel.addEventListener('mousedown', (event) => panelDragStart(event, controlsPanel));
+    // Panel dragging event listener - REMOVED
+    // if (controlsPanel) {
+    //     controlsPanel.addEventListener('mousedown', (event) => panelDragStart(event, controlsPanel));
+    // }
+
+    // Old minimize button listener - REMOVED
+    /* 
+    if (minimizeControlsButton && controlsPanel) {
+        minimizeControlsButton.addEventListener('click', () => {
+            controlsPanel.classList.toggle('controls-minimized');
+            if (controlsPanel.classList.contains('controls-minimized')) {
+                minimizeControlsButton.innerHTML = '&#43;'; 
+                minimizeControlsButton.title = 'Maximize Controls';
+            } else {
+                minimizeControlsButton.innerHTML = '&#8210;'; 
+                minimizeControlsButton.title = 'Minimize Controls';
+            }
+        });
+    }
+    */
+
+    // NEW: Event listener for the sidebar toggle button
+    if (toggleControlsSidebarButton && controlsPanel) {
+        toggleControlsSidebarButton.addEventListener('click', () => {
+            controlsPanel.classList.toggle('hidden');
+            // Optionally, change button text or icon
+            if (controlsPanel.classList.contains('hidden')) {
+                toggleControlsSidebarButton.textContent = 'Show Controls';
+            } else {
+                toggleControlsSidebarButton.textContent = 'Hide Controls';
+            }
+        });
+        // Set initial state of button text if sidebar starts hidden by default (it doesn't currently)
+        // if (controlsPanel.classList.contains('hidden')) {
+        //     toggleControlsSidebarButton.textContent = 'Show Controls';
+        // }
     }
 
-    // Populate textarea with default multi-ant configuration example
     updateTextareaWithConfiguration(defaultAntConfigsForTextArea);
-    // Initial draw after everything is set up
     drawSimulation(); 
+}
+
+// New function to display color swatches in the preview div
+function updateColorPalettePreview() {
+    const previewDiv = document.getElementById(UI_ELEMENT_IDS.colorPalettePreview);
+    if (!previewDiv) return;
+
+    const colors = getCellStateColors();
+    previewDiv.innerHTML = ''; 
+
+    if (colors && colors.length > 0) {
+        colors.forEach(color => {
+            const swatch = document.createElement('div');
+            swatch.className = 'color-swatch'; 
+            swatch.style.backgroundColor = color;
+            previewDiv.appendChild(swatch);
+        });
+    } else {
+        const noColorsMessage = document.createElement('span');
+        noColorsMessage.className = 'no-colors-text'; 
+        noColorsMessage.textContent = 'No colors to display or palette not yet active.';
+        previewDiv.appendChild(noColorsMessage);
+    }
 }

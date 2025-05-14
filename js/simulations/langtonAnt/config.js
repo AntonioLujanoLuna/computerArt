@@ -3,10 +3,6 @@ export const CANVAS_ID = 'langtonCanvas';
 export const GRID_SIZE = 500;
 export const CELL_SIZE = 5;
 
-// INITIAL_ANT_STATE and ANT_COLOR are removed as they will be part of the multi-ant JSON config.
-
-// --- New Color Palette System ---
-
 // Helper function to generate a random hex color
 // Export this function so it can be used by controller.js for ant body colors
 export function generateRandomHexColor() {
@@ -108,6 +104,11 @@ export function getCellStateColor(state) {
     return '#FF00FF'; // Fallback color (e.g., magenta for errors/undefined states)
 }
 
+// Export function to get the entire array of current cell state colors
+export function getCellStateColors() {
+    return [...cellStateColorsInternal]; // Return a copy to prevent external modification
+}
+
 // Remove old CELL_STATE_COLORS export and ensureColorForState function
 // export let CELL_STATE_COLORS = [ ... ]; // This is now replaced by cellStateColorsInternal and getCellStateColor
 // export function ensureColorForState(stateIndex) { ... } // This is replaced by populateCellStateColors
@@ -125,7 +126,10 @@ export const UI_ELEMENT_IDS = {
     generateRulesButton: 'generateRulesButton',
     numAntsForGeneration: 'numAntsForGeneration',
     generateAntsButton: 'generateAntsButton',
-    paletteSelect: 'paletteSelect' // Added for palette dropdown
+    paletteSelect: 'paletteSelect', // Added for palette dropdown
+    colorPalettePreview: 'colorPalettePreview', // Added for the palette preview div
+    minimizeControlsButton: 'minimizeControlsButton', // Added for the minimize button (will be removed soon)
+    toggleControlsSidebarButton: 'toggleControlsSidebarButton' // Added for the new sidebar toggle
 };
 
 // Initialize with default palette for a default number of states (e.g. 6, from default palette length)

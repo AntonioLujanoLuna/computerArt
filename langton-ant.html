@@ -21,66 +21,108 @@
       <a href="/game-of-life" class="nav-link">Game of Life</a>
       <!-- Additional navigation links -->
     </nav>
+    <button id="toggleControlsSidebarButton" class="sidebar-toggle-button">Controls</button> 
   </header>
 
   <main id="app">
     <!-- Langton's Ant Simulation View -->
     <div id="simulation-view" class="view">
       <canvas id="langtonCanvas"></canvas>
-      <!-- <h2>Langton's Ant</h2> -->
-      <div class="controls drag-handle"> <!-- Assuming your panel has 'drag-handle' for dragging -->
-        <h2>Controls <span class="drag-indicator"></span></h2>
-    
-        <fieldset>
-            <legend>Simulation Control</legend>
-            <div>
-                <button id="startButton">Start</button>
+    </div>
+
+    <!-- Controls Panel as a Sidebar -->
+    <div class="controls">
+        <h2>Langton's Ant Controls</h2>
+        <div class="tab-container">
+            <!-- Basic Controls Tab -->
+            <div id="basic-tab" class="tab-content active">
+                <div class="control-group">
+                <button id="startButton" class="primary">Start</button>
                 <button id="stopButton">Stop</button>
-                <button id="resetButton">Reset Simulation</button>
-            </div>
-            <div>
-                <label for="speedSlider">Speed:</label>
+                <button id="resetButton">
+                    Reset
+                    <span class="tooltip">
+                        <span class="icon">?</span>
+                        <span class="tooltip-text">Resets simulation, ant configurations to default, and view settings.</span>
+                    </span>
+                </button>
+                </div>
+                
+                <div class="control-group">
+                <label for="speedSlider">
+                    Simulation Speed: 
+                    <span class="tooltip">
+                    <span class="icon">?</span>
+                    <span class="tooltip-text">Higher values make the ants move faster</span>
+                    </span>
+                </label>
                 <input type="range" id="speedSlider" min="1" max="100" value="10">
+                </div>
+        
+                <div class="control-group">
+                <label for="quickAntSelect">Quick Preset:</label>
+                <select id="quickAntSelect">
+                    <option value="classic">Classic Langton's Ant</option>
+                    <option value="random2">Random (2 states)</option>
+                    <option value="random4">Random (4 states)</option>
+                    <option value="multiAnt">3 Ants with Unique Rules</option>
+                </select>
+                <button id="applyPresetButton" class="secondary">Apply Preset</button>
+                </div>
             </div>
-        </fieldset>
-    
-        <fieldset>
-            <legend>Ant Configuration Editor</legend>
-            <div>
-                <label for="rulesTextarea">Ant Configuration (JSON):</label>
-                <textarea id="rulesTextarea" rows="10" cols="40"></textarea>
+        
+            <!-- Advanced Tab -->
+            <div id="advanced-tab" class="tab-content">
+                <div class="control-group">
+                <label for="rulesTextarea">
+                    Ant Configuration (JSON):
+                    <span class="tooltip">
+                        <span class="icon">?</span>
+                        <span class="tooltip-text">Edit the JSON to customize ant behavior. Ants are defined as an array of objects.</span>
+                    </span>
+                </label>
+                <textarea id="rulesTextarea" rows="8"></textarea>
+                </div>
+                
+                <div class="control-group">
+                <button id="applyRulesButton" class="primary">Apply Configuration</button>
+                </div>
+        
+                <fieldset>
+                <legend>Generator Settings</legend>
+                <div class="control-group">
+                    <label for="numAntsForGeneration">Number of Ants:</label>
+                    <input type="number" id="numAntsForGeneration" value="1" min="1" style="width: 50px;">
+                </div>
+                
+                <div class="control-group">
+                    <label for="numStatesForRandom">Number of States:</label>
+                    <input type="number" id="numStatesForRandom" value="2" min="1" style="width: 50px;">
+                </div>
+                
+                <div class="control-group">
+                    <button id="generateAntsButton">
+                        Generate Ants (Unique Rules)
+                        <span class="tooltip">
+                            <span class="icon">?</span>
+                            <span class="tooltip-text">Generates the specified number of ants, each with its own new random ruleset based on the number of states.</span>
+                        </span>
+                    </button>
+                    <button id="generateRulesButton">
+                        Generate Ants (Shared Rules)
+                        <span class="tooltip">
+                            <span class="icon">?</span>
+                            <span class="tooltip-text">Generates the specified number of ants that all share a single new random ruleset based on the number of states.</span>
+                        </span>
+                    </button>
+                </div>
+                </fieldset>
             </div>
-            <div>
-                <button id="applyRulesButton">Apply Configuration from Editor</button>
-                <button id="resetRulesButton">Load Default Single Ant to Editor & Apply</button>
-            </div>
-        </fieldset>
-    
-        <fieldset>
-            <legend>Generate Ant Setups</legend>
-            <p style="font-size: 0.9em; margin-top: 0; margin-bottom: 10px;"><em>Generates configurations and populates the editor above. Click "Apply Configuration from Editor" to use.</em></p>
-            <div>
-                <label for="numAntsForGeneration">Number of Ants:</label>
-                <input type="number" id="numAntsForGeneration" value="1" min="1" style="width: 50px;">
-            </div>
-            <div>
-                <label for="numStatesForRandom">Number of States for Ruleset(s):</label>
-                <input type="number" id="numStatesForRandom" value="2" min="1" style="width: 50px;">
-            </div>
-            <div>
-                <button id="generateAntsButton">Generate Ants (Unique Rulesets)</button>
-                <br><small><em>Each ant gets its own new random ruleset.</em></small>
-            </div>
-            <div style="margin-top: 10px;">
-                <button id="generateRulesButton">Generate Ants (Shared Ruleset)</button>
-                <br><small><em>All ants get one new shared random ruleset.</em></small>
-            </div>
-        </fieldset>
-    
-        <fieldset>
-            <legend>Visuals</legend>
-            <div>
-                <label for="paletteSelect">Cell Color Palette:</label>
+        
+            <!-- Visual Tab -->
+            <div id="visual-tab" class="tab-content">
+                <div class="control-group">
+                <label for="paletteSelect">Color Palette:</label>
                 <select id="paletteSelect">
                     <option value="default">Default</option>
                     <option value="grayscale">Grayscale</option>
@@ -88,8 +130,9 @@
                     <option value="cool">Cool</option>
                     <option value="randomized">Randomized</option>
                 </select>
+                </div>
             </div>
-        </fieldset>
+        </div>
     </div>
   </main>
 
