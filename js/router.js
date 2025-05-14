@@ -1,0 +1,59 @@
+// router.js
+export default {
+  routes: {},
+  currentPath: window.location.pathname,
+  
+  init(routes) {
+    this.routes = routes;
+    
+    // Handle navigation events
+    window.addEventListener('popstate', () => {
+      this.navigate(window.location.pathname);
+    });
+    
+    // Intercept link clicks for SPA navigation
+    document.addEventListener('click', (e) => {
+      const navLink = e.target.closest('a.nav-link');
+      if (navLink) {
+        e.preventDefault();
+        const path = navLink.getAttribute('href');
+        this.navigateTo(path);
+        return;
+      }
+    
+      // Handle simulation card clicks
+      const card = e.target.closest('.simulation-card');
+      if (card && card.dataset.sim) {
+        e.preventDefault();
+        const simPath = `/${card.dataset.sim}`;
+        this.navigateTo(simPath);
+      }
+    });
+    
+    // Initial navigation
+    this.navigate(this.currentPath);
+  },
+  
+  navigateTo(path) {
+    // Update browser history
+    history.pushState({}, '', path);
+    this.navigate(path);
+  },
+  
+  navigate(path) {
+    this.currentPath = path;
+    
+    // Find matching route or use default
+    const routeHandler = this.routes[path] || this.routes['/']; // Renamed 'route' to 'routeHandler' to avoid conflict
+    
+    // Call route handler
+    if (routeHandler) {
+      routeHandler();
+    } else {
+      console.warn(`No route found for path: ${path}`);
+      // Optionally, navigate to a default/404 page
+      // const notFoundHandler = this.routes['/404'] || this.routes['/'];
+      // if (notFoundHandler) notFoundHandler();
+    }
+  }
+}; 
